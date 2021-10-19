@@ -1,9 +1,9 @@
 // simulate getting products from DataBase
 const products = [
-  { name: "Apples_:", country: "Italy", cost: 3, instock: 10 },
-  { name: "Oranges:", country: "Spain", cost: 4, instock: 3 },
-  { name: "Beans__:", country: "USA", cost: 2, instock: 5 },
-  { name: "Cabbage:", country: "USA", cost: 1, instock: 8 },
+  { name: "apples", country: "Italy", cost: 3, instock: 10 },
+  { name: "oranges", country: "Spain", cost: 4, instock: 3 },
+  { name: "beans", country: "USA", cost: 2, instock: 5 },
+  { name: "cabbage", country: "USA", cost: 1, instock: 8 },
 ];
 //=========Cart=============
 const Cart = (props) => {
@@ -187,11 +187,23 @@ const Products = (props) => {
   // TODO: implement the restockProducts function
   const restockProducts = (url) => {
     doFetch(url);
+    let itemsCopy = [...items];
     let newItems = data.map( item => {
       let {name, country, cost, instock} = item;
-      return {name,country,cost,instock};
+      let index = items.findIndex(element => element.name === name);
+      if(index > -1){
+        itemsCopy[index].instock += instock;
+      }
+      else {
+        return {name,country,cost,instock};
+      }
     })
-    setItems([...items,...newItems]);
+    newItems = newItems.filter(element => {
+      if(element) {
+        return element;
+      }
+    })
+    setItems([...itemsCopy,...newItems]);
   };
 
   return (
@@ -214,7 +226,7 @@ const Products = (props) => {
       <Row>
         <form
           onSubmit={(event) => {
-            restockProducts(`http://localhost:1337/${query}`);
+            restockProducts(query);
             console.log(`Restock called on ${query}`);
             event.preventDefault();
           }}
